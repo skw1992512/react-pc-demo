@@ -1,11 +1,26 @@
-import { Card, Form, Checkbox, Input, Button } from "antd";
+import { Card, Form, Checkbox, Input, Button, message } from "antd";
+import { useNavigate } from "react-router-dom";
+
+import { useStore } from "@/store";
 
 import "./index.scss";
 import logo from "@/assets/logo.png";
 
 export default function Login() {
-  const onFinish = (values) => {
-    console.log(values);
+  const { loginStore } = useStore();
+  const navigate = useNavigate();
+  const onFinish = async (values) => {
+    const { mobile, code } = values;
+    try {
+      await loginStore.getToken({
+        mobile,
+        code,
+      });
+      navigate("/", { replace: true });
+      message.success("登录成功");
+    } catch (err) {
+      message.error("用户名或密码失败");
+    }
   };
   return (
     <div className="login">
@@ -13,12 +28,16 @@ export default function Login() {
         <img className="login-logo" src={logo} alt="" />
         {/* 登录表单 */}
         <Form
-          initialValues={{ remember: true, password: "123456" }}
+          initialValues={{
+            remember: true,
+            mobile: "13811111111",
+            code: "246810",
+          }}
           validateTrigger={["onBlur"]}
           onFinish={onFinish}
         >
           <Form.Item
-            name="username"
+            name="mobile"
             rules={[
               {
                 required: true,
@@ -34,7 +53,7 @@ export default function Login() {
             <Input size="large" placeholder="请输入手机号" />
           </Form.Item>
           <Form.Item
-            name="password"
+            name="code"
             rules={[
               {
                 required: true,
