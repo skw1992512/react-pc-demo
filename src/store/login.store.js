@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 
-import { http, setToken, getToken } from "../utils";
+import { http, setToken, getToken, removeToken } from "../utils";
 
 class LoginStore {
   token = getToken() || "";
@@ -15,8 +15,13 @@ class LoginStore {
     });
     //设置token
     this.token = res.data.data.token;
+    // console.log(this.token);
     // 存入localStorage
     setToken(this.token);
+  };
+  loginOut = () => {
+    this.token = "";
+    removeToken();
   };
 }
 

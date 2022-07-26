@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Layout, Menu, Popconfirm } from "antd";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 import {
   HomeOutlined,
   DiffOutlined,
@@ -7,21 +9,41 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import "./index.scss";
-
 import { useStore } from "@/store";
+import { useEffect } from "react";
 
 const { Header, Sider } = Layout;
 
 const GeekLayout = () => {
   const { pathname } = useLocation();
+  const [path, setPath] = useState(pathname);
+  useEffect(() => {
+    setPath(pathname);
+  }, [pathname]);
+  const { userStore, loginStore } = useStore();
+  useEffect(() => {
+    userStore.getUserInfo();
+  }, [userStore]);
+  //确定退出
+  const navigate = useNavigate();
+  const onConfirm = () => {
+    //退出登录 删除token 跳转登录页
+    loginStore.loginOut();
+    navigate("/login");
+  };
   return (
     <Layout>
       <Header className="header">
         <div className="logo" />
         <div className="user-info">
-          <span className="user-name">user.name</span>
+          <span className="user-name">{userStore.userInfo.name}</span>
           <span className="user-logout">
-            <Popconfirm title="是否确认退出？" okText="退出" cancelText="取消">
+            <Popconfirm
+              onConfirm={onConfirm}
+              title="是否确认退出？"
+              okText="退出"
+              cancelText="取消"
+            >
               <LogoutOutlined /> 退出
             </Popconfirm>
           </span>
@@ -32,7 +54,7 @@ const GeekLayout = () => {
           <Menu
             mode="inline"
             theme="dark"
-            defaultSelectedKeys={[pathname]}
+            defaultSelectedKeys={[path]}
             style={{ height: "100%", borderRight: 0 }}
           >
             <Menu.Item icon={<HomeOutlined />} key="/">
@@ -54,4 +76,4 @@ const GeekLayout = () => {
   );
 };
 
-export default GeekLayout;
+export default observer(GeekLayout);

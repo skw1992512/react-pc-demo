@@ -11,7 +11,7 @@ const getToken = () => {
 };
 
 const removeToken = () => {
-  return window.localStorage.remove(key);
+  return window.localStorage.removeItem(key);
 };
 
 export { setToken, getToken, removeToken };

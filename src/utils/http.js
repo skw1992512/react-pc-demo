@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { getToken } from "./token";
+import { history } from "./history";
 
 const http = axios.create({
   baseURL: "http://geek.itheima.net/v1_0",
@@ -28,6 +29,9 @@ http.interceptors.response.use(
     return response;
   },
   (error) => {
+    if (error.response.status === 401) {
+      history.push("/login");
+    }
     return Promise.reject(error);
   }
 );
