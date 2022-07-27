@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 import {
   Card,
   Breadcrumb,
@@ -19,6 +20,7 @@ import locale from "antd/es/date-picker/locale/zh_CN";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import { http } from "@/utils";
+import { useStore } from "@/store";
 import "./index.scss";
 import img404 from "@/assets/error.png";
 
@@ -28,14 +30,7 @@ const { RangePicker } = DatePicker;
 const Article = () => {
   const navigate = useNavigate();
   //频道列表管理
-  const [channelList, setChannelList] = useState([]);
-  const loadChannelList = async () => {
-    const res = await http.get("/channels");
-    setChannelList(res.data.data.channels);
-  };
-  useEffect(() => {
-    loadChannelList();
-  }, []);
+  const { channelStore } = useStore();
   //文章列表管理
   const [articleData, setArticleData] = useState({
     list: [], //文章列表
@@ -192,11 +187,12 @@ const Article = () => {
 
           <Form.Item label="频道" name="channel_id">
             <Select placeholder="请选择文章频道" style={{ width: 120 }}>
-              {channelList.map((channel) => (
+              {channelStore.channelList.map((channel) => (
                 <Option key={channel.id} value={channel.id}>
                   {channel.name}
                 </Option>
               ))}
+              {/* {console.log(channelStore)} */}
             </Select>
           </Form.Item>
 
@@ -230,4 +226,4 @@ const Article = () => {
   );
 };
 
-export default Article;
+export default observer(Article);

@@ -20,10 +20,11 @@ const GeekLayout = () => {
   useEffect(() => {
     setPath(pathname);
   }, [pathname]);
-  const { userStore, loginStore } = useStore();
+  const { userStore, loginStore, channelStore } = useStore();
   useEffect(() => {
     userStore.getUserInfo();
-  }, [userStore]);
+    channelStore.loadChannelList();
+  }, [userStore, channelStore]);
   //确定退出
   const navigate = useNavigate();
   const onConfirm = () => {
